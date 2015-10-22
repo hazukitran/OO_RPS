@@ -43,7 +43,9 @@ loop do
 
   break if player_choice == "q"
 
+  begin
   computer_choice = CHOICES.keys.sample
+  end while computer_choice == "q" 
 
   puts "You chose: #{player_choice}"
   puts "Computer chose: #{computer_choice}"

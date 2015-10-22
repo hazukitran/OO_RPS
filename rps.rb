@@ -1,20 +1,20 @@
 CHOICES = { 'r' => 'rock', 'p' => 'paper', 's' => 'scissors', 'q' => 'quit'}
-draws = wins = losses = 0
+@draws = @wins = @losses = 0
 
 # ------------- METHODS -------------------
 
 def player_wins
-  wins += 1
+  @wins += 1
   puts "Congrats! You have won this round :)"
 end
 
 def player_losses
-  losses += 1
+  @losses += 1
   puts "Sorry, you have lost. Better luck next time!"
 end
 
 def draw
-  draws += 1
+  @draws += 1
   puts "It's a draw."
 end
 
@@ -51,10 +51,10 @@ loop do
 
 end
 
-puts "wins: #{wins}\nlosses: #{losses}\ndraw: #{draws}"
-if wins > losses
+puts "wins: #{@wins}\nlosses: #{@losses}\ndraw: #{@draws}"
+if @wins > @losses
   puts "You have won the game."
-elsif wins < losses
+elsif @wins < @losses
   puts "You have lost the game."
 else
   puts "The game is a draw"

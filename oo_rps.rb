@@ -11,23 +11,18 @@ class Hand
 
   include Comparable
 
-  CHOICES = { 'r' => 'rock', 'p' => 'paper', 's' => 'scissors', 'q' => 'quit'}
+  CHOICES = %w(r p s q)
 
   WINNING_HANDS = [['r', 's'], ['s', 'p'], ['p', 'r']]
-
-  attr_accessor :wins, :draws, :looses
 
   attr_reader :value
 
   def initialize(value)
     @value = value
-    @wins = 0
-    @looses = 0
-    @draws = 0
   end
 
   def human_wins(other_hand)
-    WINNING_HANDS.find { |hand| value == hand[0] && other_hand.value == hand[1] }
+    WINNING_HANDS.find { |winner| value == winner[0] && other_hand.value == winner[1] }
   end
 
   def <=>(other_hand)
@@ -52,26 +47,33 @@ end
 
 class Human 
 
-  attr_accessor :hand, :name
+  attr_accessor :hand, :name, :wins, :losses, :draws
+
+  def initialize
+    @wins = 0
+    @losses = 0
+    @draws = 0
+  end
 
   def get_name
-    system "clear"
+    
     puts "Please enter your name: "
     @name = gets.chomp
+    system "clear"
+    puts "Welcome to the game 'Rock Paper Scissors': #{name}".center(40)
+  
   end
 
   def choose_hand
     choice = ""
-    loop do
-      begin
+
+    begin
       puts "Please choose (r)ock, (p)aper, (s)cissors or (q)uit: "
       choice = gets.chomp.downcase
-      end until Hand::CHOICES.keys.include?(choice)
-      puts "Invalid input."
-      break if choice == "q"
-    end
+    end until Hand::CHOICES.include?(choice)
 
     self.hand = Hand.new(choice)
+
   end
 end
 
@@ -80,25 +82,23 @@ class Computer
   attr_accessor :hand
   
   def choose_hand
-    begin
-    self.hand = Hand.new(Hand::CHOICES.keys.sample)
-    end while hand == "q" 
+      self.hand = Hand.new(Hand::CHOICES.take(3).sample)
   end
 
 end
 
-class RPSGame 
+class RPSGame
 
   attr_accessor :human, :computer, :hand
   
   def initialize
     @human = Human.new
     @computer = Computer.new
+
   end
 
   def display_message
     system "clear"
-    puts "Welcome to the game 'Rock Paper Scissors".center(40)
 
     puts "#{human.name}".center(20) + "Computer".center(20)
     puts "#{human.hand}".center(20) + "#{computer.hand}".center(20)
@@ -106,18 +106,45 @@ class RPSGame
   end
 
   def compare_hands
-    case human.hand <=> computer.hand
-    when 0
-      
+    if human.hand == computer.hand
+      human.draws += 1
+      puts "It's a draw."
+    elsif human.hand > computer.hand
+      human.wins += 1
+      puts "#{human.name} wins this round."
+    else
+      human.losses += 1
+      puts "#{human.name} loses this round."
+    end
+  end
+
+  def final_score
+    puts "#{human.name} final score against 'Computer':"
+    puts "wins: #{human.wins}\nlosses: #{human.losses}\ndraw: #{human.draws}"
+    
+    if human.wins > human.losses
+      puts "Congrats! #{human.name} wins the game."
+    elsif human.wins < human.losses
+      puts "Sorry! #{human.name} loses the game."
+    else
+      puts "The game is a draw"
+    end
+
   end
 
   def run
-    human.choose_hand
-    computer.choose_hand
-    display_message
+
+    human.get_name
+    
+    begin
+      human.choose_hand
+      computer.choose_hand
+      display_message
+      compare_hands
+    end until human.choose_hand == 'q'
+      
+    final_score
   end
-
-
 end
  
 RPSGame.new.run

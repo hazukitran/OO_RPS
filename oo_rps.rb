@@ -73,7 +73,7 @@ class Computer
   attr_accessor :hand
   
   def choose_hand
-      self.hand = Hand.new(Hand::CHOICES.sample)
+    self.hand = Hand.new(Hand::CHOICES.sample)
   end
 
 end
@@ -134,7 +134,7 @@ class RPSGame
   end
 
   def play_again?
-      puts "Play again? (y/n)"
+      puts "Play again? 'n' to quit "
       self.response = gets.chomp.downcase
     return false if self.response == 'n'
     true

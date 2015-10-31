@@ -1,17 +1,8 @@
-# Only 2 players: Human vs Computer
-# Each player choose between 'r', 'p' or 's'
-# - computer_hand.sample
-# - human_hand between 'r', 'p', 's'
-# Compare 2 hands
-# 'r' > 's', 's' > 'p', 'p' > 'r'
-# "It's a tie" if human_hand == computer_hand
-# all in a loop, 'n' to exit
-
 class Hand
 
   include Comparable
 
-  CHOICES = %w(r p s q)
+  CHOICES = %w(r p s)
 
   WINNING_HANDS = [['r', 's'], ['s', 'p'], ['p', 'r']]
 
@@ -60,7 +51,7 @@ class Human
     puts "Please enter your name: "
     @name = gets.chomp
     system "clear"
-    puts "Welcome to the game 'Rock Paper Scissors': #{name}".center(40)
+    puts "\nWelcome to the game 'Rock Paper Scissors': #{name}".center(40)
   
   end
 
@@ -68,7 +59,7 @@ class Human
     choice = ""
 
     begin
-      puts "Please choose (r)ock, (p)aper, (s)cissors or (q)uit: "
+      puts "\nPlease choose (r)ock, (p)aper, (s)cissors: "
       choice = gets.chomp.downcase
     end until Hand::CHOICES.include?(choice)
 
@@ -82,14 +73,14 @@ class Computer
   attr_accessor :hand
   
   def choose_hand
-      self.hand = Hand.new(Hand::CHOICES.take(3).sample)
+      self.hand = Hand.new(Hand::CHOICES.sample)
   end
 
 end
 
 class RPSGame
 
-  attr_accessor :human, :computer, :hand
+  attr_accessor :human, :computer, :response
   
   def initialize
     @human = Human.new
@@ -133,18 +124,28 @@ class RPSGame
   end
 
   def run
-
-    human.get_name
     
-    begin
-      human.choose_hand
-      computer.choose_hand
-      display_message
-      compare_hands
-    end until human.choose_hand == 'q'
-      
-    final_score
+    human.get_name
+    human.choose_hand
+    computer.choose_hand
+    display_message
+    compare_hands
+
   end
+
+  def play_again?
+      puts "Play again? (y/n)"
+      self.response = gets.chomp.downcase
+    return false if self.response == 'n'
+    true
+  end 
 end
  
-RPSGame.new.run
+game = RPSGame.new
+
+loop do
+  game.run
+  break unless game.play_again?
+end
+
+game.final_score

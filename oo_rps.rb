@@ -143,9 +143,8 @@ end
  
 game = RPSGame.new
 
-loop do
+begin
   game.run
-  break unless game.play_again?
-end
+end while game.play_again?
 
 game.final_score
